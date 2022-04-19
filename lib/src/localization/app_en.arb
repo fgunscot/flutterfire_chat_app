@@ -1,0 +1,6 @@
+{
+  "appTitle": "lab1_provider_messager",
+  "@appTitle": {
+    "description": "The title of the application"
+  }
+}
