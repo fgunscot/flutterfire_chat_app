@@ -40,11 +40,11 @@ class MessageView extends StatelessWidget {
               ),
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.only(top: 4.0),
+          Padding(
+            padding: const EdgeInsets.only(top: 4.0),
             child: Text(
-              '12:39 PM',
-              style: TextStyle(fontSize: 12, color: Colors.grey),
+              '${model.postedAt.toDate().hour}:${model.postedAt.toDate().minute.toString().padLeft(2, '0')}',
+              style: const TextStyle(fontSize: 12, color: Colors.grey),
             ),
           ),
         ],
@@ -55,64 +55,64 @@ class MessageView extends StatelessWidget {
 
 class ChatView extends StatelessWidget {
   static const routeName = '/chat';
-  const ChatView({Key? key, required this.chatId}) : super(key: key);
-  final String chatId;
+  const ChatView({Key? key, required this.id}) : super(key: key);
+  final String id;
 
   @override
   Widget build(BuildContext context) {
     final _inputController = TextEditingController();
 
-    return Scaffold(
-      appBar: AppBar(),
-      body: Column(
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0),
-              child: Consumer<MessagerController>(builder: (_, controller, __) {
-                return controller.getChats[chatId]!.messages.isNotEmpty
-                    ? ListView.builder(
-                        reverse: true,
-                        itemCount: controller.getChats[chatId]!.messages.length,
-                        itemBuilder: (context, index) {
-                          return MessageView(
-                              model:
-                                  controller.getChats[chatId]!.messages[index]);
-                        },
-                      )
-                    : const CircularProgressIndicator();
-              }),
-            ),
-          ),
-          const Divider(height: 2, thickness: 2),
-          SizedBox(
-            height: 60.0,
-            width: double.maxFinite,
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: TextField(
-                      controller: _inputController,
+    return Consumer<MessagerController>(
+      builder: (_, controller, __) {
+        return Scaffold(
+          appBar: AppBar(title: Text(controller.getUserModelChatName(id))),
+          body: Column(
+            children: [
+              Expanded(
+                child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    child: controller.getChatMessages(id).isNotEmpty
+                        ? ListView.builder(
+                            reverse: true,
+                            itemCount: controller.getChatMessages(id).length,
+                            itemBuilder: (context, index) {
+                              return MessageView(
+                                  model: controller.getChatMessages(id)[index]);
+                            },
+                          )
+                        : const CircularProgressIndicator()),
+              ),
+              const Divider(height: 2, thickness: 2),
+              SizedBox(
+                height: 60.0,
+                width: double.maxFinite,
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: TextField(
+                          controller: _inputController,
+                        ),
+                      ),
                     ),
-                  ),
+                    Consumer<MessagerController>(
+                      builder: (_, controller, __) => IconButton(
+                        onPressed: () {
+                          controller.sendMessage(id, _inputController.text);
+                          _inputController.clear();
+                        },
+                        icon: const Icon(Icons.send),
+                      ),
+                    ),
+                  ],
                 ),
-                Consumer<MessagerController>(
-                  builder: (_, controller, __) => IconButton(
-                    onPressed: () {
-                      controller.sendMessage(chatId, _inputController.text);
-                      _inputController.clear();
-                    },
-                    icon: const Icon(Icons.send),
-                  ),
-                ),
-              ],
-            ),
-          )
-        ],
-      ),
+              )
+            ],
+          ),
+        );
+      },
     );
   }
 }

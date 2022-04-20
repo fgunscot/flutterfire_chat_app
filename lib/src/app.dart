@@ -40,7 +40,7 @@ class MessagerApp extends StatelessWidget {
 
               case ChatView.routeName:
                 final args = routeSettings.arguments as String;
-                return ChatView(chatId: args);
+                return ChatView(id: args);
 
               case MessagerView.routeName:
               default:

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:lab1_provider_messager/src/messager/messager_service.dart';
+import 'package:lab1_provider_messager/src/utils/string_extension.dart';
 
 class MessagerController with ChangeNotifier {
   MessagerController() {
@@ -14,6 +15,9 @@ class MessagerController with ChangeNotifier {
     _userModel = model;
     notifyListeners();
   }
+
+  String getUserModelChatName(String id) =>
+      _userModel!.chatIds[id].toString().capitalize();
 
   Map<String, UserModel> _users = {};
   Map<String, UserModel> get getUsers => _users;
@@ -36,6 +40,7 @@ class MessagerController with ChangeNotifier {
   }
 
   ChatModel getChat(String id) => _chats[id]!;
+  List<MessageModel> getChatMessages(String id) => _chats[id]!.messages;
 
   void sendMessage(String id, String message) => service.sendMessage(
       id,

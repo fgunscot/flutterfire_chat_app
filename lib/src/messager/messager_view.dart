@@ -116,8 +116,7 @@ class MessagerView extends StatelessWidget {
                             itemBuilder: (context, index) {
                               var id = controller.getChats.keys.toList()[index];
                               return ChatTile(
-                                  chatName:
-                                      controller.getUserModel()!.chatIds[id],
+                                  chatName: controller.getUserModelChatName(id),
                                   id: id);
                             },
                           )
