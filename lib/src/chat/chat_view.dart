@@ -70,13 +70,14 @@ class ChatView extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12.0),
               child: Consumer<MessagerController>(builder: (_, controller, __) {
-                var chat = controller.getChat(chatId);
-                return chat.messages.isNotEmpty
+                return controller.getChats[chatId]!.messages.isNotEmpty
                     ? ListView.builder(
                         reverse: true,
-                        itemCount: chat.messages.length,
+                        itemCount: controller.getChats[chatId]!.messages.length,
                         itemBuilder: (context, index) {
-                          return MessageView(model: chat.messages[index]);
+                          return MessageView(
+                              model:
+                                  controller.getChats[chatId]!.messages[index]);
                         },
                       )
                     : const CircularProgressIndicator();
@@ -98,14 +99,15 @@ class ChatView extends StatelessWidget {
                     ),
                   ),
                 ),
-                IconButton(
-                  onPressed: () {
-                    Provider.of<MessagerController>(context, listen: false)
-                        .sendMessage(chatId, _inputController.text);
-                    _inputController.clear();
-                  },
-                  icon: const Icon(Icons.send),
-                )
+                Consumer<MessagerController>(
+                  builder: (_, controller, __) => IconButton(
+                    onPressed: () {
+                      controller.sendMessage(chatId, _inputController.text);
+                      _inputController.clear();
+                    },
+                    icon: const Icon(Icons.send),
+                  ),
+                ),
               ],
             ),
           )

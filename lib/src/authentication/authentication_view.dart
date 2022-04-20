@@ -43,7 +43,7 @@ class _RegisterFormState extends State<RegisterForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text('Register',
+          const Text('Register.',
               style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
           TextFormField(
             key: RegisterForm.registerFormNameTextFieldKey,
@@ -148,7 +148,7 @@ class _SignInFormState extends State<SignInForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text('Login',
+          const Text('Login.',
               style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
           TextFormField(
             key: SignInForm.signInFormEmailTextFieldKey,
@@ -233,7 +233,8 @@ class AuthenticationView extends StatelessWidget {
         title: const Text('Sign In'),
       ),
       body: Center(
-        child: SizedBox(
+        child: Container(
+          margin: const EdgeInsets.only(top: 160),
           height: double.infinity,
           width: 380,
           child: Consumer<AuthenticationController>(

@@ -7,7 +7,6 @@ import 'package:lab1_provider_messager/src/authentication/authentication_view.da
 import 'package:lab1_provider_messager/src/authentication/authentication_controller.dart';
 import 'package:lab1_provider_messager/src/chat/chat_view.dart';
 import 'package:lab1_provider_messager/src/messager/messager_controller.dart';
-import 'package:lab1_provider_messager/src/messager/messager_service.dart';
 import 'package:lab1_provider_messager/src/messager/messager_view.dart';
 import 'package:provider/provider.dart';
 

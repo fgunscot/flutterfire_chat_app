@@ -67,8 +67,8 @@ class MessagerService {
         for (var doc in chats.docs) {
           var data = doc.data();
           _chats[doc.id] = data;
-          messagesListener(doc.id);
           filters.add(data.userIds.where((elem) => elem != myUserId).first);
+          messagesListener(doc.id);
         }
         controller.setChats(_chats);
         usersListener(filters);
@@ -79,11 +79,16 @@ class MessagerService {
   }
 
   void messagesListener(String id) {
-    messagesCollectionRef(id).snapshots().listen((col) {
-      for (var doc in col.docs) {
-        var data = doc.data();
-        _chats[id]!.messages.add(data);
+    messagesCollectionRef(id)
+        .orderBy('posted_at', descending: true)
+        .snapshots()
+        .listen((col) {
+      _chats[id]!.messages = [];
+      for (var msg in col.docs) {
+        var msgData = msg.data();
+        _chats[id]!.messages.add(msgData);
         _chats[id]!.messages.last.updateIsMe(myUserId);
+        controller.setChats(_chats);
       }
     });
   }
@@ -118,7 +123,7 @@ class MessagerService {
   }
 
   String? getOthersDisplayName(String id) {
-    return controller.getUsers()[id]!.displayName;
+    return controller.getUsers[id]!.displayName;
   }
 
   void addUser(User user) {
@@ -172,18 +177,25 @@ class ChatModel {
 }
 
 class MessageModel {
-  MessageModel({required this.message, required this.senderId});
+  MessageModel({
+    required this.message,
+    required this.senderId,
+    required this.postedAt,
+  });
   String message;
   String senderId;
+  Timestamp postedAt;
   bool? isMe;
 
   MessageModel.fromJson(Map<String, dynamic> json)
       : message = json['message']! as String,
-        senderId = json['sender_id']! as String;
+        senderId = json['sender_id']! as String,
+        postedAt = json['posted_at']! as Timestamp;
 
   Map<String, dynamic> toJson() => {
         'message': message,
         'sender_id': senderId,
+        'posted_at': postedAt,
       };
 
   updateIsMe(userId) => senderId == userId ? isMe = true : isMe = false;

@@ -1,0 +1,1 @@
+ /home/fgunsys/Programs/flutterfire_chat_app/.dart_tool/flutter_gen/gen_l10n/app_localizations_en.dart /home/fgunsys/Programs/flutterfire_chat_app/.dart_tool/flutter_gen/gen_l10n/app_localizations.dart:  /home/fgunsys/Programs/flutterfire_chat_app/l10n.yaml /home/fgunsys/Programs/flutterfire_chat_app/lib/src/localization/app_en.arb

@@ -56,7 +56,7 @@ class MessagerView extends StatelessWidget {
       body: Column(
         children: [
           Consumer<MessagerController>(builder: (_, controller, __) {
-            var users = controller.getUsers();
+            var users = controller.getUsers;
             return SizedBox(
               height: 70,
               child: users.isNotEmpty
@@ -82,7 +82,8 @@ class MessagerView extends StatelessWidget {
                           ],
                         );
                       })
-                  : const Center(child: Text('you have no friends')),
+                  : const Center(
+                      child: Text('Nobody to chat too, tried login in?')),
             );
           }),
           Expanded(
@@ -108,13 +109,12 @@ class MessagerView extends StatelessWidget {
                 ),
                 child: Consumer<MessagerController>(
                   builder: (_, controller, __) {
-                    var chats = controller.getChats();
-                    return (controller.getChats().isNotEmpty &&
+                    return (controller.getChats.isNotEmpty &&
                             controller.getUserModel()!.chatIds.isNotEmpty)
                         ? ListView.builder(
-                            itemCount: chats.length,
+                            itemCount: controller.getChats.length,
                             itemBuilder: (context, index) {
-                              var id = chats.keys.toList()[index];
+                              var id = controller.getChats.keys.toList()[index];
                               return ChatTile(
                                   chatName:
                                       controller.getUserModel()!.chatIds[id],
