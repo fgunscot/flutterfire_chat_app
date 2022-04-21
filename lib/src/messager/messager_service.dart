@@ -48,34 +48,46 @@ class MessagerService {
             controller.setUserModel(user.data());
             chatsListener();
           });
-        } else {
-          addUser(user);
         }
       }
     });
   }
 
   void chatsListener() {
-    List<String> filters = [];
-
     var chatIds = controller.getUserModel()!.chatIds.keys.toList();
     if (chatIds.isNotEmpty) {
       _chatsCollectionRef
           .where(FieldPath.documentId, whereIn: chatIds)
           .snapshots()
           .listen((chats) {
+        List<String> filters = [];
         for (var doc in chats.docs) {
           var data = doc.data();
           _chats[doc.id] = data;
-          filters.add(data.userIds.where((elem) => elem != myUserId).first);
+          var filterOpt = data.userIds.where((elem) => elem != myUserId).first;
+          filters.add(filterOpt);
           messagesListener(doc.id);
         }
         controller.setChats(_chats);
         usersListener(filters);
       });
     } else {
-      usersListener(filters);
+      usersListener([]);
     }
+  }
+
+  void usersListener(List<String> filters) {
+    filters.add(myUserId);
+    _usersCollectionRef
+        .where(FieldPath.documentId, whereNotIn: filters)
+        .snapshots()
+        .listen((users) {
+      Map<String, UserModel> col = {};
+      for (var doc in users.docs) {
+        col[doc.id] = doc.data();
+      }
+      controller.setUsers(col);
+    });
   }
 
   void messagesListener(String id) {
@@ -93,21 +105,7 @@ class MessagerService {
     });
   }
 
-  void usersListener(List<String> filters) {
-    filters.add(myUserId);
-    _usersCollectionRef
-        .where(FieldPath.documentId, whereNotIn: filters)
-        .snapshots()
-        .listen((users) {
-      Map<String, UserModel> col = {};
-      for (var doc in users.docs) {
-        col[doc.id] = doc.data();
-      }
-      controller.setUsers(col);
-    });
-  }
-
-  void startChat(String id) async {
+  Future<String> startChat(String id) async {
     var ref = await _chatsCollectionRef.add(ChatModel(userIds: [myUserId, id]));
     var chatId = ref.id;
     _usersCollectionRef
@@ -116,6 +114,7 @@ class MessagerService {
     _usersCollectionRef
         .doc(id)
         .update({'chat_ids.$chatId': controller.getUserModel()!.displayName});
+    return chatId;
   }
 
   void sendMessage(String id, MessageModel model) {
@@ -124,13 +123,6 @@ class MessagerService {
 
   String? getOthersDisplayName(String id) {
     return controller.getUsers[id]!.displayName;
-  }
-
-  void addUser(User user) {
-    _usersCollectionRef.doc(user.uid).set(UserModel(
-          displayName: user.displayName,
-          chatIds: {},
-        ));
   }
 
   Future<bool> checkExist(String id) async {

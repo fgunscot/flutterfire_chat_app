@@ -26,7 +26,7 @@ class MessagerController with ChangeNotifier {
     notifyListeners();
   }
 
-  startChat(String id) => service.startChat(id);
+  Future<String> startChat(String id) async => await service.startChat(id);
   Map<String, ChatModel> _chats = {};
   Map<String, ChatModel> get getChats => _chats;
   setChats(Map<String, ChatModel> models) {
@@ -39,7 +39,10 @@ class MessagerController with ChangeNotifier {
     notifyListeners();
   }
 
-  ChatModel getChat(String id) => _chats[id]!;
+  ChatModel? getChat(String id) {
+    return _chats.containsKey(id) ? _chats[id] : null;
+  }
+
   List<MessageModel> getChatMessages(String id) => _chats[id]!.messages;
 
   void sendMessage(String id, String message) => service.sendMessage(

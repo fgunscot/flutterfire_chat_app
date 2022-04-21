@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lab1_provider_messager/src/authentication/authentication_view.dart';
 import 'package:lab1_provider_messager/src/chat/chat_view.dart';
 import 'package:lab1_provider_messager/src/messager/messager_controller.dart';
+import 'package:lab1_provider_messager/src/utils/color_utils.dart';
 import 'package:provider/provider.dart';
 
 class ChatTile extends StatelessWidget {
@@ -17,9 +18,13 @@ class ChatTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       key: Key('chatTileIndex$id'),
-      leading: const CircleAvatar(
+      leading: CircleAvatar(
+        backgroundColor: getRandomColor(),
         radius: 20,
-        backgroundColor: Colors.cyan,
+        child: Text(
+          chatName[0].toUpperCase(),
+          style: const TextStyle(fontWeight: FontWeight.w700),
+        ),
       ),
       title: Text(chatName),
       onTap: () => Navigator.restorablePushNamed(
@@ -69,15 +74,23 @@ class MessagerView extends StatelessWidget {
                           children: [
                             const SizedBox(width: 10),
                             GestureDetector(
-                              onTap: () {
-                                controller.startChat(id);
-                                // Navigator.restorablePushNamed(
-                                //   context,
-                                //   ChatView.routeName,
-                                //   arguments: id,
-                                // );
+                              onTap: () async {
+                                var ref = await controller.startChat(id);
+                                Navigator.restorablePushNamed(
+                                  context,
+                                  ChatView.routeName,
+                                  arguments: ref,
+                                );
                               },
-                              child: const CircleAvatar(radius: 20),
+                              child: CircleAvatar(
+                                backgroundColor: getRandomColor(),
+                                radius: 20,
+                                child: Text(
+                                  users[id]!.displayName![0].toUpperCase(),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w700),
+                                ),
+                              ),
                             ),
                           ],
                         );
@@ -107,22 +120,28 @@ class MessagerView extends StatelessWidget {
                       topLeft: Radius.circular(24.0),
                       topRight: Radius.circular(24.0)),
                 ),
-                child: Consumer<MessagerController>(
-                  builder: (_, controller, __) {
-                    return (controller.getChats.isNotEmpty &&
-                            controller.getUserModel()!.chatIds.isNotEmpty)
-                        ? ListView.builder(
-                            itemCount: controller.getChats.length,
-                            itemBuilder: (context, index) {
-                              var id = controller.getChats.keys.toList()[index];
-                              return ChatTile(
-                                  chatName: controller.getUserModelChatName(id),
-                                  id: id);
-                            },
-                          )
-                        : const Center(
-                            child: Text('You dont have anyone to chat with.'));
-                  },
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Consumer<MessagerController>(
+                    builder: (_, controller, __) {
+                      return (controller.getChats.isNotEmpty &&
+                              controller.getUserModel()!.chatIds.isNotEmpty)
+                          ? ListView.builder(
+                              itemCount: controller.getChats.length,
+                              itemBuilder: (context, index) {
+                                var id =
+                                    controller.getChats.keys.toList()[index];
+                                return ChatTile(
+                                    chatName:
+                                        controller.getUserModelChatName(id),
+                                    id: id);
+                              },
+                            )
+                          : const Center(
+                              child:
+                                  Text('You dont have anyone to chat with.'));
+                    },
+                  ),
                 ),
               ),
             ),

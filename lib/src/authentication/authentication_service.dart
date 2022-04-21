@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:lab1_provider_messager/src/authentication/authentication_controller.dart';
+import 'package:lab1_provider_messager/src/messager/messager_service.dart';
 
 class AuthenticationService {
   AuthenticationService() {
@@ -7,6 +9,13 @@ class AuthenticationService {
   }
 
   AuthenticationController? controller;
+
+  final _usersCollectionRef = FirebaseFirestore.instance
+      .collection('users')
+      .withConverter<UserModel>(
+        fromFirestore: (snapshot, _) => UserModel.fromJson(snapshot.data()!),
+        toFirestore: (movie, _) => movie.toJson(),
+      );
 
   Future<void> init() async {
     FirebaseAuth.instance.userChanges().listen((user) {
@@ -39,9 +48,17 @@ class AuthenticationService {
           .createUserWithEmailAndPassword(
               email: model.email, password: model.password);
       await credential.user!.updateDisplayName(model.displayName);
+      await addUser(credential.user!.uid, model.displayName!);
     } on FirebaseAuthException catch (e) {
       errorCallback(e);
     }
+  }
+
+  Future<void> addUser(String id, String name) async {
+    await _usersCollectionRef.doc(id).set(UserModel(
+          displayName: name,
+          chatIds: {},
+        ));
   }
 
   void logOutCurrentUser() async {

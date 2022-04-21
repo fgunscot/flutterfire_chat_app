@@ -66,51 +66,55 @@ class ChatView extends StatelessWidget {
       builder: (_, controller, __) {
         return Scaffold(
           appBar: AppBar(title: Text(controller.getUserModelChatName(id))),
-          body: Column(
-            children: [
-              Expanded(
-                child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                    child: controller.getChatMessages(id).isNotEmpty
-                        ? ListView.builder(
-                            reverse: true,
-                            itemCount: controller.getChatMessages(id).length,
-                            itemBuilder: (context, index) {
-                              return MessageView(
-                                  model: controller.getChatMessages(id)[index]);
-                            },
-                          )
-                        : const CircularProgressIndicator()),
-              ),
-              const Divider(height: 2, thickness: 2),
-              SizedBox(
-                height: 60.0,
-                width: double.maxFinite,
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
+          body: controller.getChat(id) != null
+              ? Column(
                   children: [
                     Expanded(
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: TextField(
-                          controller: _inputController,
-                        ),
-                      ),
+                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                          child: controller.getChatMessages(id).isNotEmpty
+                              ? ListView.builder(
+                                  reverse: true,
+                                  itemCount:
+                                      controller.getChatMessages(id).length,
+                                  itemBuilder: (context, index) {
+                                    return MessageView(
+                                        model: controller
+                                            .getChatMessages(id)[index]);
+                                  },
+                                )
+                              : const Center(
+                                  child:
+                                      Text('Send a message to start chat.'))),
                     ),
-                    Consumer<MessagerController>(
-                      builder: (_, controller, __) => IconButton(
-                        onPressed: () {
-                          controller.sendMessage(id, _inputController.text);
-                          _inputController.clear();
-                        },
-                        icon: const Icon(Icons.send),
+                    const Divider(height: 2, thickness: 2),
+                    SizedBox(
+                      height: 60.0,
+                      width: double.maxFinite,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: TextField(
+                                controller: _inputController,
+                              ),
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              controller.sendMessage(id, _inputController.text);
+                              _inputController.clear();
+                            },
+                            icon: const Icon(Icons.send),
+                          ),
+                        ],
                       ),
-                    ),
+                    )
                   ],
-                ),
-              )
-            ],
-          ),
+                )
+              : const CircularProgressIndicator(),
         );
       },
     );
