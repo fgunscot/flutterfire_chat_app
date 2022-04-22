@@ -8,6 +8,8 @@ import 'package:lab1_provider_messager/src/authentication/authentication_control
 import 'package:lab1_provider_messager/src/chat/chat_view.dart';
 import 'package:lab1_provider_messager/src/messager/messager_controller.dart';
 import 'package:lab1_provider_messager/src/messager/messager_view.dart';
+import 'package:lab1_provider_messager/src/settings/settings_controller.dart';
+import 'package:lab1_provider_messager/src/settings/settings_service.dart';
 import 'package:provider/provider.dart';
 
 class MessagerApp extends StatelessWidget {
@@ -66,6 +68,8 @@ class MyApp extends StatelessWidget {
                 AuthenticationController(AuthenticationService())),
         ChangeNotifierProvider<MessagerController>(
             create: (context) => MessagerController()),
+        ChangeNotifierProvider<SettingsController>(
+            create: (context) => SettingsController()),
       ],
       child: const MessagerApp(),
     );

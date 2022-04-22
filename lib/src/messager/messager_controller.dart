@@ -1,5 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:lab1_provider_messager/src/messager/messager_service.dart';
 import 'package:lab1_provider_messager/src/utils/string_extension.dart';
 
